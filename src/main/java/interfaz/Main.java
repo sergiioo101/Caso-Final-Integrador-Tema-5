@@ -1,82 +1,71 @@
 package interfaz;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javax.swing.*;
+import java.awt.*;
 
-public class AplicacionPrincipal extends Application {
-
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Sistema Interactivo de Análisis Genómico y Organización de Datos");
-
-        // Creación de botones para las distintas funcionalidades
-        Button btnAnalisisGenomico = new Button("Análisis Genómico");
-        btnAnalisisGenomico.setOnAction(e -> realizarAnalisisGenomico());
-
-        Button btnGestionDocumentos = new Button("Gestión de Documentos");
-        btnGestionDocumentos.setOnAction(e -> gestionarDocumentos());
-
-        Button btnGestionFechas = new Button("Gestión de Fechas");
-        btnGestionFechas.setOnAction(e -> gestionarFechas());
-
-        // Organización de los botones en la interfaz
-        VBox layout = new VBox(10);
-        layout.getChildren().addAll(btnAnalisisGenomico, btnGestionDocumentos, btnGestionFechas);
-
-        Scene scene = new Scene(layout, 400, 250);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-
-    private void realizarAnalisisGenomico() {
-        Stage stage = new Stage();
-        VBox layout = new VBox(10);
-        layout.getChildren().add(new Label("Análisis Genómico"));
-        Scene scene = new Scene(layout, 300, 200);
-        stage.setTitle("Análisis Genómico");
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    private void gestionarDocumentos() {
-        Stage stage = new Stage();
-        VBox layout = new VBox(10);
-        layout.getChildren().add(new Label("Gestión de Documentos"));
-        Scene scene = new Scene(layout, 300, 200);
-        stage.setTitle("Gestión de Documentos");
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    private void gestionarFechas() {
-        Stage stage = new Stage();
-        VBox layout = new VBox(10);
-        DatePicker datePicker = new DatePicker();
-        Button addDate = new Button("Agregar Fecha");
-        Label feedback = new Label();
-
-        addDate.setOnAction(e -> {
-            LocalDate date = datePicker.getValue();
-            if (date != null) {
-                feedback.setText("Fecha " + date.toString() + " agregada.");
-                // Aquí se agregaría la fecha al sistema de gestión de fechas
-            } else {
-                feedback.setText("Seleccione una fecha válida.");
-            }
-        });
-
-        layout.getChildren().addAll(new Label("Gestión de Fechas"), datePicker, addDate, feedback);
-        Scene scene = new Scene(layout, 300, 250);
-        stage.setTitle("Gestión de Fechas");
-        stage.setScene(scene);
-        stage.show();
-    }
+public class Main {
 
     public static void main(String[] args) {
-        launch(args);
+        SwingUtilities.invokeLater(Main::crearYMostrarGUI);
+    }
+
+    private static void crearYMostrarGUI() {
+        JFrame frame = new JFrame("Sistema Interactivo de Análisis Genómico y Organización de Datos");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        frame.setSize(400, 200);
+
+        JButton btnAnalisisGenomico = new JButton("Análisis Genómico");
+        btnAnalisisGenomico.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Análisis Genómico en proceso..."));
+
+        JButton btnGestionDocumentos = new JButton("Gestión de Documentos");
+        btnGestionDocumentos.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Gestión de Documentos activada..."));
+
+        JButton btnGestionFechas = new JButton("Gestión de Fechas");
+        btnGestionFechas.addActionListener(e -> gestionarFechas(frame));
+
+        frame.add(btnAnalisisGenomico);
+        frame.add(btnGestionDocumentos);
+        frame.add(btnGestionFechas);
+
+        frame.setVisible(true);
+    }
+
+    private static void gestionarFechas(JFrame parentFrame) {
+        JFrame fechaFrame = new JFrame("Gestión de Fechas");
+        fechaFrame.setLayout(new FlowLayout());
+        fechaFrame.setSize(350, 200);
+
+        JComboBox<Integer> dayComboBox = new JComboBox<>(generateNumbers(1, 31));
+        JComboBox<Integer> monthComboBox = new JComboBox<>(generateNumbers(1, 12));
+        JComboBox<Integer> yearComboBox = new JComboBox<>(generateNumbers(1900, 2100));
+        JButton addButton = new JButton("Agregar Fecha");
+        JLabel feedbackLabel = new JLabel();
+
+        addButton.addActionListener(e -> {
+            Integer day = (Integer) dayComboBox.getSelectedItem();
+            Integer month = (Integer) monthComboBox.getSelectedItem();
+            Integer year = (Integer) yearComboBox.getSelectedItem();
+            feedbackLabel.setText("Fecha agregada: " + day + "/" + month + "/" + year);
+        });
+
+        fechaFrame.add(dayComboBox);
+        fechaFrame.add(monthComboBox);
+        fechaFrame.add(yearComboBox);
+        fechaFrame.add(addButton);
+        fechaFrame.add(feedbackLabel);
+
+        fechaFrame.setVisible(true);
+    }
+
+    private static Integer[] generateNumbers(int start, int end) {
+        Integer[] numbers = new Integer[end - start + 1];
+        for (int i = start; i <= end; i++) {
+            numbers[i - start] = i;
+        }
+        return numbers;
     }
 }
+
+
 
