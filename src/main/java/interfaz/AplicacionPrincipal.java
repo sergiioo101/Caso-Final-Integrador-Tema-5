@@ -2,27 +2,37 @@ package interfaz;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 
-public class Main {
+// Asumimos que las clases están en sus respectivos paquetes y se han importado correctamente
+import analisisgenomico.ContadorGenes;
+import gestioninformacion.GestorFechas;
+import gestioninformacion.OrganizadorDocumentos;
+
+public class AplicacionPrincipal {
+
+    private static ContadorGenes contadorGenes = new ContadorGenes();
+    private static GestorFechas gestorFechas = new GestorFechas();
+    private static OrganizadorDocumentos organizadorDocumentos = new OrganizadorDocumentos();
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Main::crearYMostrarGUI);
+        SwingUtilities.invokeLater(AplicacionPrincipal::crearYMostrarGUI);
     }
 
     private static void crearYMostrarGUI() {
         JFrame frame = new JFrame("Sistema Interactivo de Análisis Genómico y Organización de Datos");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        frame.setSize(400, 200);
+        frame.setSize(500, 300);
 
         JButton btnAnalisisGenomico = new JButton("Análisis Genómico");
-        btnAnalisisGenomico.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Análisis Genómico en proceso..."));
+        btnAnalisisGenomico.addActionListener(e -> realizarAnalisisGenomico());
 
         JButton btnGestionDocumentos = new JButton("Gestión de Documentos");
-        btnGestionDocumentos.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Gestión de Documentos activada..."));
+        btnGestionDocumentos.addActionListener(e -> gestionarDocumentos());
 
         JButton btnGestionFechas = new JButton("Gestión de Fechas");
-        btnGestionFechas.addActionListener(e -> gestionarFechas(frame));
+        btnGestionFechas.addActionListener(e -> gestionarFechas());
 
         frame.add(btnAnalisisGenomico);
         frame.add(btnGestionDocumentos);
@@ -31,7 +41,20 @@ public class Main {
         frame.setVisible(true);
     }
 
-    private static void gestionarFechas(JFrame parentFrame) {
+    private static void realizarAnalisisGenomico() {
+        String dna = JOptionPane.showInputDialog("Ingrese la secuencia de DNA:");
+        int numGenes = contadorGenes.contarGenes(dna);
+        JOptionPane.showMessageDialog(null, "Número de genes encontrados: " + numGenes);
+    }
+
+    private static void gestionarDocumentos() {
+        String texto = JOptionPane.showInputDialog("Ingrese texto para organizar (separado por comas):");
+        String[] lineas = texto.split(",");
+        organizadorDocumentos.ordenarDocumentos(Arrays.asList(lineas));
+        JOptionPane.showMessageDialog(null, "Documentos Organizados: \n" + String.join("\n", lineas));
+    }
+
+    private static void gestionarFechas() {
         JFrame fechaFrame = new JFrame("Gestión de Fechas");
         fechaFrame.setLayout(new FlowLayout());
         fechaFrame.setSize(350, 200);
@@ -47,6 +70,7 @@ public class Main {
             Integer month = (Integer) monthComboBox.getSelectedItem();
             Integer year = (Integer) yearComboBox.getSelectedItem();
             feedbackLabel.setText("Fecha agregada: " + day + "/" + month + "/" + year);
+            gestorFechas.agregarFecha(day, month, year);  // Asume que GestorFechas tiene un método para agregar fechas
         });
 
         fechaFrame.add(dayComboBox);
@@ -66,6 +90,7 @@ public class Main {
         return numbers;
     }
 }
+
 
 
 
