@@ -44,7 +44,7 @@ public class GestorFechas {
 
     public void agregarFecha(int day, int month, int year) {
         try {
-            LocalDate fecha = LocalDate.of(year, month, day);
+            LocalDate fecha = LocalDate.of(day, month, year);
             agregarFecha(fecha);
         } catch (Exception e) {
             System.out.println("Error al agregar la fecha: " + e.getMessage());
