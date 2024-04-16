@@ -5,6 +5,7 @@ import java.awt.*;
 import java.util.Arrays;
 
 // Asumimos que las clases están en sus respectivos paquetes y se han importado correctamente
+import analisisgenomico.CombinadorGenetico;
 import analisisgenomico.ContadorGenes;
 import gestioninformacion.GestorFechas;
 import gestioninformacion.OrganizadorDocumentos;
@@ -46,6 +47,13 @@ public class AplicacionPrincipal {
         int numGenes = contadorGenes.contarGenes(dna);
         JOptionPane.showMessageDialog(null, "Número de genes encontrados: " + numGenes);
     }
+    private static void realizarCombinacionesGeneticas() {
+        String genes = JOptionPane.showInputDialog("Ingrese la secuencia de genes:");
+        CombinadorGenetico combinador  = new CombinadorGenetico();
+        int numCombinaciones = combinador.calcularCombinaciones(genes);
+        JOptionPane.showMessageDialog(null, "Número total de combinaciones posibles: " + numCombinaciones);
+    }
+
 
     private static void gestionarDocumentos() {
         String texto = JOptionPane.showInputDialog("Ingrese texto para organizar (separado por comas):");

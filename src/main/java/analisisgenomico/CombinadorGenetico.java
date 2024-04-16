@@ -17,4 +17,5 @@ public class CombinadorGenetico {
         int excluirGenActual = calcularCombinacionesRecursivo(genes, index + 1);
         return incluirGenActual + excluirGenActual;
     }
+
 }
