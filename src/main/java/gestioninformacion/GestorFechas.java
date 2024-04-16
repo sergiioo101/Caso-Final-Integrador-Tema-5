@@ -32,24 +32,6 @@ public class GestorFechas {
         }
     }
 
-    public void editarFecha(LocalDate original, LocalDate nueva) {
-        int index = fechas.indexOf(original);
-        if (index != -1) {
-            fechas.set(index, nueva);
-            System.out.println("Fecha editada exitosamente de " + original + " a " + nueva);
-        } else {
-            System.out.println("Fecha original no encontrada.");
-        }
-    }
-
-    public void agregarFecha(int day, int month, int year) {
-        try {
-            LocalDate fecha = LocalDate.of(day, month, year);
-            agregarFecha(fecha);
-        } catch (Exception e) {
-            System.out.println("Error al agregar la fecha: " + e.getMessage());
-        }
-    }
 }
 
 

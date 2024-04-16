@@ -4,6 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
+import analisisnumerico.ListadorNumeros;
+import analisisnumerico.CalculadorPotencias;
+import analisisnumerico.BuscadorMaximo;
 import gestioninformacion.GestorFechas;
 import analisisgenomico.ContadorGenes;
 import analisisgenomico.CombinadorGenetico;
@@ -14,8 +18,11 @@ public class AplicacionPrincipal {
     private static ContadorGenes contadorGenes = new ContadorGenes();
     private static GestorFechas gestorFechas = new GestorFechas();
     private static OrganizadorDocumentos organizadorDocumentos = new OrganizadorDocumentos();
-    private static DefaultListModel<LocalDate> dateListModel = new DefaultListModel<>();
-    private static JList<LocalDate> dateList = new JList<>(dateListModel);
+    private static ListadorNumeros listadorNumeros = new ListadorNumeros();
+    private static CalculadorPotencias calculadorPotencias = new CalculadorPotencias();
+    private static BuscadorMaximo buscadorMaximo = new BuscadorMaximo();
+    private static DefaultListModel<LocalDate> dateListModel = new DefaultListModel<>(); // Modelo de lista para fechas
+    private static JList<LocalDate> dateList = new JList<>(dateListModel); // JList que usa el modelo
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(AplicacionPrincipal::crearYMostrarGUI);
@@ -25,10 +32,13 @@ public class AplicacionPrincipal {
         JFrame frame = new JFrame("Sistema Interactivo de Análisis Genómico y Organización de Datos");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        frame.setSize(500, 400);
+        frame.setSize(600, 400);
 
         JButton btnAnalisisGenomico = new JButton("Análisis Genómico");
         btnAnalisisGenomico.addActionListener(e -> realizarAnalisisGenomico());
+
+        JButton btnAnalisisNumerico = new JButton("Análisis Numérico");
+        btnAnalisisNumerico.addActionListener(e -> realizarAnalisisNumerico());
 
         JButton btnGestionDocumentos = new JButton("Gestión de Documentos");
         btnGestionDocumentos.addActionListener(e -> gestionarDocumentos());
@@ -37,6 +47,7 @@ public class AplicacionPrincipal {
         btnGestionFechas.addActionListener(e -> gestionarFechas());
 
         frame.add(btnAnalisisGenomico);
+        frame.add(btnAnalisisNumerico);
         frame.add(btnGestionDocumentos);
         frame.add(btnGestionFechas);
 
@@ -47,6 +58,41 @@ public class AplicacionPrincipal {
         String dna = JOptionPane.showInputDialog("Ingrese la secuencia de DNA:");
         int numGenes = contadorGenes.contarGenes(dna);
         JOptionPane.showMessageDialog(null, "Número de genes encontrados: " + numGenes);
+    }
+
+    private static void realizarAnalisisNumerico() {
+        JFrame numericFrame = new JFrame("Análisis Numérico");
+        numericFrame.setLayout(new FlowLayout());
+        numericFrame.setSize(500, 200);
+
+        JButton listButton = new JButton("Listar Números");
+        listButton.addActionListener(e -> {
+            int inicio = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el número inicial:"));
+            int fin = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el número final:"));
+            List<Integer> numeros = listadorNumeros.listarNumeros(inicio, fin);
+            JOptionPane.showMessageDialog(null, "Números listados: " + numeros);
+        });
+
+        JButton powerButton = new JButton("Calcular Potencia");
+        powerButton.addActionListener(e -> {
+            int base = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la base:"));
+            int exponente = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el exponente:"));
+            int resultado = calculadorPotencias.calcularPotencia(base, exponente);
+            JOptionPane.showMessageDialog(null, base + "^" + exponente + " = " + resultado);
+        });
+
+        JButton maxButton = new JButton("Encontrar Máximo");
+        maxButton.addActionListener(e -> {
+            int[] datos = Arrays.stream(JOptionPane.showInputDialog("Ingrese números separados por comas:").split(",")).mapToInt(Integer::parseInt).toArray();
+            int maximo = buscadorMaximo.encontrarMaximo(datos);
+            JOptionPane.showMessageDialog(null, "El máximo es: " + maximo);
+        });
+
+        numericFrame.add(listButton);
+        numericFrame.add(powerButton);
+        numericFrame.add(maxButton);
+
+        numericFrame.setVisible(true);
     }
 
     private static void gestionarDocumentos() {
