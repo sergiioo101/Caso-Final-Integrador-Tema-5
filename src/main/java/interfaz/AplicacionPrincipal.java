@@ -19,6 +19,7 @@ import gestioninformacion.GestorFechas;
 import analisisgenomico.ContadorGenes;
 import gestioninformacion.OrganizadorDocumentos;
 import gestioninformacion.BuscadorTexto;
+import optimizacion.OptimizadorQuicksort;
 
 public class AplicacionPrincipal {
 
@@ -31,6 +32,7 @@ public class AplicacionPrincipal {
     private static BuscadorMaximo buscadorMaximo = new BuscadorMaximo();
     private static DefaultListModel<LocalDate> dateListModel = new DefaultListModel<>();
     private static JList<LocalDate> dateList = new JList<>(dateListModel);
+    private static OptimizadorQuicksort optimizador = new OptimizadorQuicksort();
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(AplicacionPrincipal::crearYMostrarGUI);
@@ -197,6 +199,10 @@ public class AplicacionPrincipal {
 
         fechaFrame.add(inputPanel, BorderLayout.SOUTH);
         fechaFrame.setVisible(true);
+    }
+
+    private static void quickSort(int[] array) {
+        optimizador.quickSort(array);
     }
 
     private static Integer[] generateNumbers(int start, int end) {
