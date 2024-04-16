@@ -11,10 +11,6 @@ public class GestorFechas {
         this.fechas = new ArrayList<>();
     }
 
-    /**
-     * Agrega una fecha al gestor de fechas.
-     * @param fecha La fecha a agregar.
-     */
     public void agregarFecha(LocalDate fecha) {
         if (fecha != null) {
             fechas.add(fecha);
@@ -24,35 +20,29 @@ public class GestorFechas {
         }
     }
 
-    /**
-     * Obtiene una lista de todas las fechas almacenadas.
-     * @return Una lista de objetos LocalDate.
-     */
     public List<LocalDate> obtenerFechas() {
-        return new ArrayList<>(fechas);  // Devuelve una copia de la lista para evitar modificaciones externas.
+        return new ArrayList<>(fechas);
     }
 
-    /**
-     * Busca fechas en el rango especificado.
-     * @param desde La fecha de inicio del rango.
-     * @param hasta La fecha de fin del rango.
-     * @return Una lista de fechas dentro del rango especificado.
-     */
-    public List<LocalDate> buscarFechas(LocalDate desde, LocalDate hasta) {
-        List<LocalDate> resultado = new ArrayList<>();
-        for (LocalDate fecha : fechas) {
-            if ((fecha.isEqual(desde) || fecha.isAfter(desde)) && (fecha.isEqual(hasta) || fecha.isBefore(hasta))) {
-                resultado.add(fecha);
-            }
+    public void eliminarFecha(LocalDate fecha) {
+        if (fechas.remove(fecha)) {
+            System.out.println("Fecha eliminada exitosamente: " + fecha);
+        } else {
+            System.out.println("Fecha no encontrada.");
         }
-        return resultado;
     }
 
-    public void agregarFecha(Integer day, Integer month, Integer year) {
-        if (day == null || month == null || year == null) {
-            System.out.println("No se puede agregar una fecha con valores nulos.");
-            return;
+    public void editarFecha(LocalDate original, LocalDate nueva) {
+        int index = fechas.indexOf(original);
+        if (index != -1) {
+            fechas.set(index, nueva);
+            System.out.println("Fecha editada exitosamente de " + original + " a " + nueva);
+        } else {
+            System.out.println("Fecha original no encontrada.");
         }
+    }
+
+    public void agregarFecha(int day, int month, int year) {
         try {
             LocalDate fecha = LocalDate.of(year, month, day);
             agregarFecha(fecha);
@@ -61,5 +51,6 @@ public class GestorFechas {
         }
     }
 }
+
 
 
