@@ -2,27 +2,35 @@ package interfaz;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import analisisnumerico.ListadorNumeros;
 import analisisnumerico.CalculadorPotencias;
 import analisisnumerico.BuscadorMaximo;
 import gestioninformacion.GestorFechas;
 import analisisgenomico.ContadorGenes;
-import analisisgenomico.CombinadorGenetico;
 import gestioninformacion.OrganizadorDocumentos;
+import gestioninformacion.BuscadorTexto;
 
 public class AplicacionPrincipal {
 
     private static ContadorGenes contadorGenes = new ContadorGenes();
     private static GestorFechas gestorFechas = new GestorFechas();
     private static OrganizadorDocumentos organizadorDocumentos = new OrganizadorDocumentos();
+    private static BuscadorTexto buscadorTexto = new BuscadorTexto();
     private static ListadorNumeros listadorNumeros = new ListadorNumeros();
     private static CalculadorPotencias calculadorPotencias = new CalculadorPotencias();
     private static BuscadorMaximo buscadorMaximo = new BuscadorMaximo();
-    private static DefaultListModel<LocalDate> dateListModel = new DefaultListModel<>(); // Modelo de lista para fechas
-    private static JList<LocalDate> dateList = new JList<>(dateListModel); // JList que usa el modelo
+    private static DefaultListModel<LocalDate> dateListModel = new DefaultListModel<>();
+    private static JList<LocalDate> dateList = new JList<>(dateListModel);
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(AplicacionPrincipal::crearYMostrarGUI);
@@ -40,15 +48,15 @@ public class AplicacionPrincipal {
         JButton btnAnalisisNumerico = new JButton("Análisis Numérico");
         btnAnalisisNumerico.addActionListener(e -> realizarAnalisisNumerico());
 
-        JButton btnGestionDocumentos = new JButton("Gestión de Documentos");
-        btnGestionDocumentos.addActionListener(e -> gestionarDocumentos());
+        JButton btnGestionInformacion = new JButton("Gestión de Información");
+        btnGestionInformacion.addActionListener(e -> gestionarInformacion());
 
         JButton btnGestionFechas = new JButton("Gestión de Fechas");
         btnGestionFechas.addActionListener(e -> gestionarFechas());
 
         frame.add(btnAnalisisGenomico);
         frame.add(btnAnalisisNumerico);
-        frame.add(btnGestionDocumentos);
+        frame.add(btnGestionInformacion);
         frame.add(btnGestionFechas);
 
         frame.setVisible(true);
@@ -95,11 +103,59 @@ public class AplicacionPrincipal {
         numericFrame.setVisible(true);
     }
 
-    private static void gestionarDocumentos() {
-        String texto = JOptionPane.showInputDialog("Ingrese texto para organizar (separado por comas):");
-        String[] lineas = texto.split(",");
-        organizadorDocumentos.ordenarDocumentos(Arrays.asList(lineas));
-        JOptionPane.showMessageDialog(null, "Documentos Organizados: \n" + String.join("\n", lineas));
+    private static void gestionarInformacion() {
+        JFrame infoFrame = new JFrame("Gestión de Información");
+        infoFrame.setLayout(new FlowLayout());
+        infoFrame.setSize(500, 300);
+
+        JButton btnOrdenarDocumentos = new JButton("Ordenar Documentos");
+        btnOrdenarDocumentos.addActionListener(e -> ordenarDocumentos());
+
+        JButton btnBuscarTexto = new JButton("Buscar en Textos");
+        btnBuscarTexto.addActionListener(e -> buscarEnTextos());
+
+        infoFrame.add(btnOrdenarDocumentos);
+        infoFrame.add(btnBuscarTexto);
+
+        infoFrame.setVisible(true);
+    }
+
+    private static void ordenarDocumentos() {
+        JFileChooser fileChooser = new JFileChooser("./documentos");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
+        int result = fileChooser.showOpenDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            Path file = fileChooser.getSelectedFile().toPath();
+            try {
+                List<String> lines = Files.readAllLines(file);
+                Collections.sort(lines);
+                Files.write(file, lines);
+                JOptionPane.showMessageDialog(null, "El archivo ha sido ordenado correctamente.");
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Error al leer o escribir el archivo: " + e.getMessage());
+            }
+        }
+    }
+
+    private static void buscarEnTextos() {
+        JFileChooser fileChooser = new JFileChooser("./documentos");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
+        int result = fileChooser.showOpenDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            Path file = fileChooser.getSelectedFile().toPath();
+            String palabra = JOptionPane.showInputDialog("Ingrese la palabra a buscar:");
+            try {
+                List<String> lines = Files.readAllLines(file);
+                Collections.sort(lines);  // Ensure lines are sorted for binary search
+                boolean encontrado = buscadorTexto.buscarBinaria(lines, palabra);
+                String mensaje = encontrado ? "Palabra encontrada." : "Palabra no encontrada.";
+                JOptionPane.showMessageDialog(null, mensaje);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Error al leer el archivo: " + e.getMessage());
+            }
+        }
     }
 
     private static void gestionarFechas() {
@@ -107,7 +163,7 @@ public class AplicacionPrincipal {
         fechaFrame.setLayout(new BorderLayout());
         fechaFrame.setSize(500, 300);
 
-        JPanel inputPanel = new JPanel();
+        JPanel inputPanel = new JPanel(new FlowLayout());
         JComboBox<Integer> dayComboBox = new JComboBox<>(generateNumbers(1, 31));
         JComboBox<Integer> monthComboBox = new JComboBox<>(generateNumbers(1, 12));
         JComboBox<Integer> yearComboBox = new JComboBox<>(generateNumbers(1900, 2100));
@@ -117,7 +173,7 @@ public class AplicacionPrincipal {
         inputPanel.add(yearComboBox);
         inputPanel.add(addButton);
 
-        // Agregar JList y JScrollPane para mostrar fechas
+        // Add JList and JScrollPane to show dates
         fechaFrame.add(new JScrollPane(dateList), BorderLayout.CENTER);
 
         addButton.addActionListener(e -> {
@@ -151,6 +207,8 @@ public class AplicacionPrincipal {
         return numbers;
     }
 }
+
+
 
 
 
