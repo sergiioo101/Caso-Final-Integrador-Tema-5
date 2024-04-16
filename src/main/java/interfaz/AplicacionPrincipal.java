@@ -2,24 +2,22 @@ package interfaz;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import analisisnumerico.ListadorNumeros;
 import analisisnumerico.CalculadorPotencias;
 import analisisnumerico.BuscadorMaximo;
+import optimizacion.OptimizadorQuicksort;
 import gestioninformacion.GestorFechas;
 import analisisgenomico.ContadorGenes;
 import gestioninformacion.OrganizadorDocumentos;
 import gestioninformacion.BuscadorTexto;
-import optimizacion.OptimizadorQuicksort;
 
 public class AplicacionPrincipal {
 
@@ -32,7 +30,6 @@ public class AplicacionPrincipal {
     private static BuscadorMaximo buscadorMaximo = new BuscadorMaximo();
     private static DefaultListModel<LocalDate> dateListModel = new DefaultListModel<>();
     private static JList<LocalDate> dateList = new JList<>(dateListModel);
-    private static OptimizadorQuicksort optimizador = new OptimizadorQuicksort();
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(AplicacionPrincipal::crearYMostrarGUI);
@@ -73,7 +70,7 @@ public class AplicacionPrincipal {
     private static void realizarAnalisisNumerico() {
         JFrame numericFrame = new JFrame("Análisis Numérico");
         numericFrame.setLayout(new FlowLayout());
-        numericFrame.setSize(500, 200);
+        numericFrame.setSize(500, 300);
 
         JButton listButton = new JButton("Listar Números");
         listButton.addActionListener(e -> {
@@ -98,9 +95,18 @@ public class AplicacionPrincipal {
             JOptionPane.showMessageDialog(null, "El máximo es: " + maximo);
         });
 
+        JButton quicksortButton = new JButton("Optimizar Quicksort");
+        quicksortButton.addActionListener(e -> {
+            String input = JOptionPane.showInputDialog("Ingrese números separados por comas para ordenar:");
+            int[] arr = Arrays.stream(input.split(",")).mapToInt(Integer::parseInt).toArray();
+            OptimizadorQuicksort.quicksort(arr, 0, arr.length - 1);
+            JOptionPane.showMessageDialog(null, "Números ordenados: " + Arrays.toString(arr));
+        });
+
         numericFrame.add(listButton);
         numericFrame.add(powerButton);
         numericFrame.add(maxButton);
+        numericFrame.add(quicksortButton);
 
         numericFrame.setVisible(true);
     }
@@ -125,7 +131,6 @@ public class AplicacionPrincipal {
     private static void ordenarDocumentos() {
         JFileChooser fileChooser = new JFileChooser("./documentos");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
         int result = fileChooser.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
             Path file = fileChooser.getSelectedFile().toPath();
@@ -143,7 +148,6 @@ public class AplicacionPrincipal {
     private static void buscarEnTextos() {
         JFileChooser fileChooser = new JFileChooser("./documentos");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt"));
         int result = fileChooser.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION) {
             Path file = fileChooser.getSelectedFile().toPath();
@@ -175,7 +179,6 @@ public class AplicacionPrincipal {
         inputPanel.add(yearComboBox);
         inputPanel.add(addButton);
 
-        // Add JList and JScrollPane to show dates
         fechaFrame.add(new JScrollPane(dateList), BorderLayout.CENTER);
 
         addButton.addActionListener(e -> {
@@ -201,10 +204,6 @@ public class AplicacionPrincipal {
         fechaFrame.setVisible(true);
     }
 
-    private static void quickSort(int[] array) {
-        optimizador.quickSort(array);
-    }
-
     private static Integer[] generateNumbers(int start, int end) {
         Integer[] numbers = new Integer[end - start + 1];
         for (int i = start; i <= end; i++) {
@@ -213,6 +212,7 @@ public class AplicacionPrincipal {
         return numbers;
     }
 }
+
 
 
 

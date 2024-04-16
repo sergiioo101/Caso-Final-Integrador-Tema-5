@@ -1,6 +1,10 @@
 package optimizacion;
 
 public class OptimizadorQuicksort {
+    public static void quicksort(int[] arr, int i, int i1) {
+
+    }
+
     // Método público para iniciar el quicksort
     public void quickSort(int[] array) {
         quickSort(array, 0, array.length - 1);
